@@ -2,6 +2,8 @@
  * Created by Rod Nolan on 11/11/2016.
  */
 import React, {PropTypes} from 'react';
+import {connect} from 'react-redux';
+import * as courseActions from '../../actions/courseActions';
 
 class CoursesPage extends React.Component {
   constructor(props, context) {
@@ -27,7 +29,9 @@ class CoursesPage extends React.Component {
 
   onClickSave() {
     // so that, in the expression below, this.state doesn't try to read 'state' from the input
-    alert(`Saving course: ${this.state.course.title}`);
+    //alert(`Saving course: ${this.state.course.title}`);
+    this.props.dispatch(courseActions.createCourse(this.state.course));
+    // this dispatch() function was injected by connect()
   }
 
   render () {
@@ -51,5 +55,18 @@ class CoursesPage extends React.Component {
   }
 }
 
-export default CoursesPage;
+function mapStateToProps(state, ownProps) {
+  return {
+    courses: state.coursesState
+  }
+  // ownProps is best for routing - related props which will be injected by react router... not necessary yet.
+}
 
+export default connect(mapStateToProps)(CoursesPage);
+/*
+const connectedStateAndProps = connect(mapStateToProps, mapDispatchToProps);
+    // at this point, we don't want to expose any actions on the component so we remove that optional parameter from the connect call above
+    // that means that a default dispatch property (a function) gets injected by connect() so that we can call dispatch() directly to fire off actions
+    // that's a terrible idea because now the presentational components are not dumb any more
+export default connectedStateAndProps(CoursesPage);
+*/
